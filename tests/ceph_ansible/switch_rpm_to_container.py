@@ -1,8 +1,7 @@
 '''switches non-containerized ceph daemon to containerized ceph daemon'''
 
 import logging
-logger = logging.getLogger(__name__)
-log = logger
+log = logging.getLogger(__name__)
 
 
 def run(**kw):

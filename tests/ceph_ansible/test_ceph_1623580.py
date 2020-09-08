@@ -2,8 +2,7 @@ import logging
 import re
 import json
 
-logger = logging.getLogger(__name__)
-log = logger
+log = logging.getLogger(__name__)
 
 BOOT_DISK_CMD = "findmnt -v -n -T / -o SOURCE"
 
