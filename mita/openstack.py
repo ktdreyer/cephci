@@ -266,21 +266,26 @@ class CephVMNode(object):
 
             _node = self.driver_v2.ex_get_node_details(self.node.id)
 
+            description = 'node {name} is in "{state}" state'.format(
+                name=self.node_name,
+                state=_node.state
+            )
+
             if _node.state == "running":
-                logger.info("%s is now in running state.", self.node.name)
+                logger.info(description)
                 break
 
             if _node.state == "error":
-                logger.error("Failed to create %s", _node.state)
+                logger.error(description)
                 raise NodeErrorState(_node.extra.get("fault", {}).get("message"))
 
             if datetime.datetime.now() - start_time > timeout:
-                logger.info("Failed to bring the node in running state in %s", timeout)
-                raise NodeErrorState(
-                    'node {name} is in "{state}" state'.format(
-                        name=self.node_name, state=_node.state
-                    )
+                logger.error(description)
+                failure = 'Failed to bring {name} in running state in {timeout}'.format(
+                    name=self.node_name,
+                    state=_node.state
                 )
+                raise NodeErrorState(failure)
 
     def _wait_until_ip_is_known(self):
         """Retrieve the IP address of the instance."""
