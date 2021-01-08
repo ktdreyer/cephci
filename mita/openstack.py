@@ -277,7 +277,12 @@ class CephVMNode(object):
 
             if _node.state == "error":
                 logger.error(description)
-                raise NodeErrorState(_node.extra.get("fault", {}).get("message"))
+                fault = _node.extra.get('fault', {})
+                message = fault.get('message')
+                code = fault.get('code')
+                details = fault.get('details')
+                failure_description = ' '.join(message, code, details)
+                raise NodeErrorState(failure_description)
 
             if datetime.datetime.now() - start_time > timeout:
                 logger.error(description)
