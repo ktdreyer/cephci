@@ -13,7 +13,7 @@ log = logging.getLogger(__name__)
 rpm_packages = {
     "py2": [
         "wget",
-        "git",
+        "git-core",
         "python-virtualenv",
         "redhat-lsb",
         "python-nose",
@@ -22,7 +22,7 @@ rpm_packages = {
     ],
     "py3": [
         "wget",
-        "git",
+        "git-core",
         "python3-virtualenv",
         "redhat-lsb",
         "python3-nose",
