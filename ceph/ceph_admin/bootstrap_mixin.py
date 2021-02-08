@@ -36,27 +36,33 @@ class BootstrapMixin:
         # Construct bootstrap command
         # 1) Skip default mon, mgr & crash specs
         # 2) Skip automatic dashboard provisioning
-        cdn_cred = get_cephci_config().get("cdn_credentials")
 
-        cmd = "cephadm -v "
-        if not self.config.get("registry") and self.config.get("container_image"):
-            cmd += "--image {image} ".format(image=self.config.get("container_image"))
+        cmd = ['cephadm', '-v']
 
-        cmd += (
-            "bootstrap "
-            "--registry-url registry.redhat.io "
-            "--registry-username {user} "
-            "--registry-password {password} "
-            "--orphan-initial-daemons "
-            "--skip-monitoring-stack "
-            "--mon-ip {mon_ip}"
-        )
+        image = self.config.get('container_image')
+        if not self.config.get("registry") and image:
+            cmd += ['--image', image]
 
-        cmd = cmd.format(
-            user=cdn_cred.get("username"),
-            password=cdn_cred.get("password"),
-            mon_ip=self.installer.node.ip_address,
-        )
+        cmd += ['bootstrap',
+                '--orphan-initial-daemons',
+                '--skip-monitoring-stack',
+                '--mon-ip', self.installer.node.ip_address,
+                ]
+
+        cephci_config = get_cephci_config()
+        if 'cdn_credentials' not in cephci_config:
+                # cephadm installs a Prometheus image from the terms-based
+                # registry at registry.redhat.io, and that requires Red Hat CDN
+                # credentials.
+                raise KeyError('cephadm requires cdn_credentials in ~/.cephci.yaml')
+        cdn_cred = cephci_config['cdn_credentials']
+        cmd += [
+            '--registry-url', 'registry.redhat.io',
+            '--registry-username', cdn_cred['username'],
+            '--registry-password', cdn_cred['password'],
+        ]
+
+        cmd = ' '.join(cmd)
 
         out, err = self.installer.exec_command(
             sudo=True,
