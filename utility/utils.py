@@ -762,7 +762,7 @@ def get_cephci_config():
     cfg_file = os.path.join(home_dir, ".cephci.yaml")
     try:
         with open(cfg_file, "r") as yml:
-            cfg = yaml.safe_load(yml)
+            cfg = yaml.safe_load(yml) or {}
     except IOError:
         log.error(
             "Please create ~/.cephci.yaml from the cephci.yaml.template. "
