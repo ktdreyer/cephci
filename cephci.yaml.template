@@ -14,6 +14,8 @@
 
 # Provide cdn_credentials before running suites which needs
 # access to GAed container image registry i.e 'registry.redhat.io'
+# For example, cephadm requires the prometheus image from registry.redhat.io,
+# so you must fill out the cdn_credentials section to run the cephadm suites.
 
 # cdn_credentials:
 #  username: <user_name>
